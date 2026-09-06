@@ -127,12 +127,18 @@ FORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/gemma4_31b_lora_dpo.
 llamafactory-cli export examples/merge_lora/gemma4_31b_merge_dpo.yaml
 ```
 
-The same three-stage sequence applies to GPT-OSS-120B with the `gpt_oss_120b_*` config files.
-Note: gpt-oss ships with native MXFP4 quantization on its MoE weights, but LlamaFactory always
-dequantizes it to bf16 on load — size the cluster on ~234GB (117B params × 2 bytes), not the
-~61GB MXFP4 checkpoint size. Full-parameter fine-tuning of either model does not fit 4x H200;
-these configs use LoRA (rank 32 for PT, rank 16 for SFT/DPO) throughout. Swap `stage: dpo` for
-`stage: kto` (with an unpaired preference dataset) if KTO is preferred over DPO.
+The same three-stage sequence applies to GPT-OSS-120B and GPT-OSS-20B with the `gpt_oss_120b_*` /
+`gpt_oss_20b_*` config files. Note: gpt-oss ships with native MXFP4 quantization on its MoE weights,
+but LlamaFactory always dequantizes it to bf16 on load — size the cluster on ~234GB for the 120B
+variant (117B params × 2 bytes) and ~42GB for the 20B variant (20.9B params × 2 bytes), not the
+MXFP4 checkpoint sizes. Full-parameter fine-tuning of the 120B model does not fit 4x H200, but the
+20B model is light enough for full-parameter fine-tuning at that scale; these configs use LoRA
+(rank 32 for PT, rank 16 for SFT/DPO) throughout for consistency across both sizes. Swap
+`stage: dpo` for `stage: kto` (with an unpaired preference dataset) if KTO is preferred over DPO.
+
+For combining this pipeline with a knowledge-graph/ontology layer (e.g. for a domain-specialized
+model over a structured knowledge base), see `integrations/credit_kg_ontology/README.md` for an
+open-source survey and integration architecture.
 
 ### QLoRA Fine-Tuning
 
