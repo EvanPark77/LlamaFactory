@@ -106,6 +106,34 @@ FORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/qwen3_lora_sft_ds3.y
 USE_RAY=1 llamafactory-cli train examples/train_lora/qwen3_lora_sft_ray.yaml
 ```
 
+#### Foundation Model Customization Pipeline (PT → SFT → DPO) on a 4x H200 Node
+
+LoRA-only pipeline for domain-customizing a large open-weight model without full-parameter fine-tuning,
+sized for a single node with 4x H200 (141GB each). Each stage's LoRA adapter is merged into the base
+weights before the next stage starts. Available for `Gemma-4-31B` (dense, `google/gemma-4-31B`) and
+`GPT-OSS-120B` (MoE, `openai/gpt-oss-120b`) — replace the `dataset:` fields with real data before a real run.
+
+```bash
+# 1. Continued pretraining (LoRA) on the domain corpus
+FORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/gemma4_31b_lora_pretrain.yaml
+llamafactory-cli export examples/merge_lora/gemma4_31b_merge_pretrain.yaml
+
+# 2. Supervised fine-tuning (LoRA) on top of the merged PT checkpoint
+FORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/gemma4_31b_lora_sft.yaml
+llamafactory-cli export examples/merge_lora/gemma4_31b_merge_sft.yaml
+
+# 3. Preference alignment (LoRA DPO) on top of the merged SFT checkpoint
+FORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/gemma4_31b_lora_dpo.yaml
+llamafactory-cli export examples/merge_lora/gemma4_31b_merge_dpo.yaml
+```
+
+The same three-stage sequence applies to GPT-OSS-120B with the `gpt_oss_120b_*` config files.
+Note: gpt-oss ships with native MXFP4 quantization on its MoE weights, but LlamaFactory always
+dequantizes it to bf16 on load — size the cluster on ~234GB (117B params × 2 bytes), not the
+~61GB MXFP4 checkpoint size. Full-parameter fine-tuning of either model does not fit 4x H200;
+these configs use LoRA (rank 32 for PT, rank 16 for SFT/DPO) throughout. Swap `stage: dpo` for
+`stage: kto` (with an unpaired preference dataset) if KTO is preferred over DPO.
+
 ### QLoRA Fine-Tuning
 
 #### Supervised Fine-Tuning with 4/8-bit Bitsandbytes/HQQ/EETQ Quantization (Recommended)

@@ -1,0 +1,54 @@
+### model
+# NOTE: continued pretraining should start from the base checkpoint, not the "-it" (Thinking) checkpoint.
+# google/gemma-4-31B is not yet registered in extras/constants.py (WebUI dropdown), but any HF repo id
+# works directly here as long as `template` is set explicitly.
+model_name_or_path: google/gemma-4-31B
+template: gemma4
+trust_remote_code: true
+
+### method
+stage: pt
+do_train: true
+finetuning_type: lora
+lora_rank: 32
+lora_alpha: 64
+lora_target: all
+# 4x H200 (141GB each): dense 30.7B bf16 weights = ~61GB, sharded by ZeRO-3 => ~15GB/GPU for weights alone.
+# No CPU/param offload needed for a LoRA run at this scale.
+deepspeed: examples/deepspeed/ds_z3_config.json
+
+### dataset
+# TODO: replace with the actual domain corpus registered in data/dataset_info.json.
+# c4_demo is only a smoke-test placeholder to validate the pipeline end-to-end.
+dataset: c4_demo
+cutoff_len: 4096
+max_samples: 100000
+preprocessing_num_workers: 16
+dataloader_num_workers: 4
+
+### output
+output_dir: saves/gemma4-31b/lora/pretrain
+logging_steps: 10
+save_steps: 500
+plot_loss: true
+overwrite_output_dir: true
+save_only_model: false
+report_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]
+
+### train
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+bf16: true
+ddp_timeout: 180000000
+resume_from_checkpoint: null
+
+### eval
+# eval_dataset: c4_demo
+# val_size: 0.01
+# per_device_eval_batch_size: 1
+# eval_strategy: steps
+# eval_steps: 500
