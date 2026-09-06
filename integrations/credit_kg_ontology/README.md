@@ -94,6 +94,9 @@ integrations/
 | 3단계 | KG 순회 기반 SFT/DPO 데이터 합성 → `examples/train_lora/gpt_oss_*` 파이프라인 투입 | LlamaFactory 학습 데이터셋 |
 | 4단계 | 서빙 단계 Graph Retriever(LightRAG 스타일) PoC → 응답 근거 추적성 검증 | 리트리버 PoC + 평가 리포트 |
 
+검색 품질 향상(Elasticsearch 하이브리드 + 용어집)과 멀티 LLM 서빙 단계의 하네스·컨텍스트 유지·
+캐싱 설계는 별도 문서로 분리했다 — [`search_and_serving_architecture.md`](search_and_serving_architecture.md) 참고.
+
 ## 5. GPT-OSS-20B/120B 사후학습 규모 비교 (4× H200 기준)
 
 | | GPT-OSS-20B | GPT-OSS-120B |
