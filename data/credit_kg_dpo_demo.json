@@ -1,0 +1,98 @@
+[
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "{{company_name}}의 부채비율 관련해서 평가 근거 문장을 만들어줘."
+      }
+    ],
+    "chosen": {
+      "from": "gpt",
+      "value": "부채비율: {{debt_ratio}}%\n판정: 위험 수준으로 관찰됨 [AI 검증 필요]\n\n⚠️ AI 보조 결과 — 반드시 전문가 검토 후 확정"
+    },
+    "rejected": {
+      "from": "gpt",
+      "value": "부채비율: 250%\n판정: 위험 수준으로 관찰됨 [AI 검증 필요]\n\n⚠️ AI 보조 결과 — 반드시 전문가 검토 후 확정"
+    }
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "{{company_name}}의 유동비율 관련해서 평가 근거 문장을 만들어줘."
+      }
+    ],
+    "chosen": {
+      "from": "gpt",
+      "value": "유동비율: {{current_ratio}}%\n판정: 위험 수준으로 관찰됨 [AI 검증 필요]\n\n⚠️ AI 보조 결과 — 반드시 전문가 검토 후 확정"
+    },
+    "rejected": {
+      "from": "gpt",
+      "value": "유동비율: {{current_ratio}}%\n이 기업은 위험 상태입니다."
+    }
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "{{company_name}}의 이자보상배율 관련해서 평가 근거 문장을 만들어줘."
+      }
+    ],
+    "chosen": {
+      "from": "gpt",
+      "value": "이자보상배율: {{icr}}배\n판정: 심각 수준으로 관찰됨 [AI 검증 필요]\n\n⚠️ AI 보조 결과 — 반드시 전문가 검토 후 확정"
+    },
+    "rejected": {
+      "from": "gpt",
+      "value": "이자보상배율: 0.8배\n판정: 심각 수준으로 관찰됨 [AI 검증 필요]\n\n⚠️ AI 보조 결과 — 반드시 전문가 검토 후 확정"
+    }
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "{{company_name}}의 부채비율 관련해서 평가 근거 문장을 만들어줘."
+      }
+    ],
+    "chosen": {
+      "from": "gpt",
+      "value": "부채비율: {{debt_ratio}}%\n판정: 정상 수준으로 관찰됨 [AI 검증 필요]\n\n⚠️ AI 보조 결과 — 반드시 전문가 검토 후 확정"
+    },
+    "rejected": {
+      "from": "gpt",
+      "value": "부채비율: {{debt_ratio}}%\n이 기업은 정상 상태입니다."
+    }
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "{{company_name}}의 유동비율 관련해서 평가 근거 문장을 만들어줘."
+      }
+    ],
+    "chosen": {
+      "from": "gpt",
+      "value": "유동비율: {{current_ratio}}%\n판정: 정상 수준으로 관찰됨 [AI 검증 필요]\n\n⚠️ AI 보조 결과 — 반드시 전문가 검토 후 확정"
+    },
+    "rejected": {
+      "from": "gpt",
+      "value": "유동비율: 150%\n판정: 정상 수준으로 관찰됨 [AI 검증 필요]\n\n⚠️ AI 보조 결과 — 반드시 전문가 검토 후 확정"
+    }
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "{{company_name}}의 이자보상배율 관련해서 평가 근거 문장을 만들어줘."
+      }
+    ],
+    "chosen": {
+      "from": "gpt",
+      "value": "이자보상배율: {{icr}}배\n판정: 정상 수준으로 관찰됨 [AI 검증 필요]\n\n⚠️ AI 보조 결과 — 반드시 전문가 검토 후 확정"
+    },
+    "rejected": {
+      "from": "gpt",
+      "value": "이자보상배율: {{icr}}배\n이 기업은 정상 상태입니다."
+    }
+  }
+]

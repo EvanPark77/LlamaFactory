@@ -1,0 +1,143 @@
+@prefix cred: <http://saltlux.example.org/ontology/credit-eval#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://saltlux.example.org/ontology/credit-eval> a owl:Ontology ;
+    rdfs:comment "기업신용평가 도메인 최소 온톨로지 — FIBO 서브셋 확장" .
+
+cred:Company_가상기업A a cred:Company ;
+    rdfs:label "가상기업A"@ko ;
+    cred:hasObservation cred:Observation_1,
+        cred:Observation_2,
+        cred:Observation_3 .
+
+cred:Company_가상기업B a cred:Company ;
+    rdfs:label "가상기업B"@ko ;
+    cred:hasObservation cred:Observation_4,
+        cred:Observation_5,
+        cred:Observation_6 .
+
+cred:EvaluationCriterion a owl:Class ;
+    rdfs:label "평가 판단 기준"@ko .
+
+cred:definition a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorType ;
+    rdfs:range xsd:string .
+
+cred:hasObservation a owl:ObjectProperty ;
+    rdfs:domain cred:Company ;
+    rdfs:range cred:IndicatorObservation .
+
+cred:hasValue a owl:DatatypeProperty ;
+    rdfs:comment "실제 관측 수치 — 학습데이터 생성 시 절대 그대로 노출하지 않고 {{variable_id}} 플레이스홀더로만 참조한다" ;
+    rdfs:domain cred:IndicatorObservation ;
+    rdfs:range xsd:decimal .
+
+cred:observedAt a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorObservation ;
+    rdfs:range xsd:date .
+
+cred:ofIndicatorType a owl:ObjectProperty ;
+    rdfs:domain cred:IndicatorObservation ;
+    rdfs:range cred:IndicatorType .
+
+cred:riskDirection a owl:DatatypeProperty ;
+    rdfs:comment "'high_is_risk' 또는 'low_is_risk' — 임계값을 초과/미달할 때 어느 쪽이 위험인지" ;
+    rdfs:domain cred:IndicatorType ;
+    rdfs:range xsd:string .
+
+cred:term_debt_ratio a skos:Concept ;
+    skos:altLabel "Debt Ratio"@en,
+        "레버리지 비율"@ko ;
+    skos:prefLabel "부채비율"@ko ;
+    skos:related cred:IndicatorType_DebtRatio .
+
+cred:term_interest_coverage a skos:Concept ;
+    skos:altLabel "ICR"@en,
+        "Interest Coverage Ratio"@en ;
+    skos:prefLabel "이자보상배율"@ko ;
+    skos:related cred:IndicatorType_InterestCoverageRatio .
+
+cred:thresholdSevere a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorType ;
+    rdfs:range xsd:decimal .
+
+cred:thresholdWarning a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorType ;
+    rdfs:range xsd:decimal .
+
+cred:variableId a owl:DatatypeProperty ;
+    rdfs:comment "학습데이터 output에 노출해도 되는 플레이스홀더 변수명 (예: debt_ratio)" ;
+    rdfs:domain cred:IndicatorObservation ;
+    rdfs:range xsd:string .
+
+cred:Observation_1 a cred:IndicatorObservation ;
+    cred:hasValue 250.0 ;
+    cred:observedAt "2026-06-30"^^xsd:date ;
+    cred:ofIndicatorType cred:IndicatorType_debt_ratio ;
+    cred:variableId "debt_ratio" .
+
+cred:Observation_2 a cred:IndicatorObservation ;
+    cred:hasValue 80.0 ;
+    cred:observedAt "2026-06-30"^^xsd:date ;
+    cred:ofIndicatorType cred:IndicatorType_current_ratio ;
+    cred:variableId "current_ratio" .
+
+cred:Observation_3 a cred:IndicatorObservation ;
+    cred:hasValue 0.8 ;
+    cred:observedAt "2026-06-30"^^xsd:date ;
+    cred:ofIndicatorType cred:IndicatorType_icr ;
+    cred:variableId "icr" .
+
+cred:Observation_4 a cred:IndicatorObservation ;
+    cred:hasValue 120.0 ;
+    cred:observedAt "2026-06-30"^^xsd:date ;
+    cred:ofIndicatorType cred:IndicatorType_debt_ratio ;
+    cred:variableId "debt_ratio" .
+
+cred:Observation_5 a cred:IndicatorObservation ;
+    cred:hasValue 150.0 ;
+    cred:observedAt "2026-06-30"^^xsd:date ;
+    cred:ofIndicatorType cred:IndicatorType_current_ratio ;
+    cred:variableId "current_ratio" .
+
+cred:Observation_6 a cred:IndicatorObservation ;
+    cred:hasValue 4.5 ;
+    cred:observedAt "2026-06-30"^^xsd:date ;
+    cred:ofIndicatorType cred:IndicatorType_icr ;
+    cred:variableId "icr" .
+
+cred:IndicatorType_current_ratio a cred:IndicatorType ;
+    rdfs:label "유동비율"@ko ;
+    cred:definition "유동비율은 유동자산을 유동부채로 나눈 값으로, 기업이 단기 채무를 유동자산으로 얼마나 감당할 수 있는지를 나타내는 안정성 지표다." ;
+    cred:riskDirection "low_is_risk" ;
+    cred:thresholdSevere 50.0 ;
+    cred:thresholdWarning 100.0 .
+
+cred:IndicatorType_debt_ratio a cred:IndicatorType ;
+    rdfs:label "부채비율"@ko ;
+    cred:definition "부채비율은 총부채를 자기자본으로 나눈 값으로, 기업이 자기자본 대비 얼마나 많은 부채를 사용하고 있는지를 나타내는 안정성 지표다." ;
+    cred:riskDirection "high_is_risk" ;
+    cred:thresholdSevere 400.0 ;
+    cred:thresholdWarning 200.0 .
+
+cred:IndicatorType_icr a cred:IndicatorType ;
+    rdfs:label "이자보상배율"@ko ;
+    cred:definition "이자보상배율은 영업이익을 이자비용으로 나눈 값으로, 기업이 영업활동으로 창출한 이익으로 이자비용을 얼마나 감당할 수 있는지를 나타내는 안정성 지표다." ;
+    cred:riskDirection "low_is_risk" ;
+    cred:thresholdSevere 1.0 ;
+    cred:thresholdWarning 2.0 .
+
+cred:Company a owl:Class ;
+    rdfs:label "기업"@ko .
+
+cred:IndicatorType a owl:Class ;
+    rdfs:label "재무지표 종류"@ko ;
+    rdfs:comment "예: 부채비율, 유동비율, 이자보상배율 등 지표의 정의와 임계값을 담는 클래스" .
+
+cred:IndicatorObservation a owl:Class ;
+    rdfs:label "지표 관측치"@ko ;
+    rdfs:comment "특정 기업의 특정 시점 지표 관측값 — 실제 수치는 이 계층에만 존재하고, 학습데이터 생성 단계에서는 플레이스홀더로 치환된다" .
+
