@@ -1,0 +1,53 @@
+### model
+model_name_or_path: openai/gpt-oss-20b
+template: gpt_oss
+trust_remote_code: true
+
+### method
+stage: pt
+do_train: true
+finetuning_type: lora
+lora_rank: 32
+lora_alpha: 64
+lora_target: all
+# NOTE: like gpt-oss-120b, this ships with native MXFP4 quantization on its MoE weights, dequantized to
+# bf16 unconditionally on load (model_utils/quantization.py). Size on 20.9B params x 2 bytes = ~42GB, not
+# the ~13GB MXFP4 checkpoint size. Much lighter than the 120B variant — with 4x H200 (141GB each) this is
+# comfortable even without ZeRO-3 sharding; full-parameter fine-tuning is also feasible at this size
+# (see integrations/credit_kg_ontology/README.md for the memory comparison), unlike gpt-oss-120b.
+deepspeed: examples/deepspeed/ds_z3_config.json
+
+### dataset
+# TODO: replace with the actual domain corpus registered in data/dataset_info.json.
+dataset: c4_demo
+cutoff_len: 4096
+max_samples: 100000
+preprocessing_num_workers: 16
+dataloader_num_workers: 4
+
+### output
+output_dir: saves/gpt-oss-20b/lora/pretrain
+logging_steps: 10
+save_steps: 500
+plot_loss: true
+overwrite_output_dir: true
+save_only_model: false
+report_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]
+
+### train
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+bf16: true
+ddp_timeout: 180000000
+resume_from_checkpoint: null
+
+### eval
+# eval_dataset: c4_demo
+# val_size: 0.01
+# per_device_eval_batch_size: 1
+# eval_strategy: steps
+# eval_steps: 500

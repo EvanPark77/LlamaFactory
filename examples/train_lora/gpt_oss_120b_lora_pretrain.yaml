@@ -1,0 +1,53 @@
+### model
+model_name_or_path: openai/gpt-oss-120b
+template: gpt_oss
+trust_remote_code: true
+
+### method
+stage: pt
+do_train: true
+finetuning_type: lora
+lora_rank: 32
+lora_alpha: 64
+lora_target: all
+# NOTE: gpt-oss ships with native MXFP4 quantization on its MoE weights, but LlamaFactory always
+# dequantizes MXFP4 checkpoints to bf16 on load (model_utils/quantization.py) — this is unconditional,
+# not only under ZeRO-3/FSDP. Size the cluster on 117B params x 2 bytes = ~234GB, not the ~61GB MXFP4
+# checkpoint size. With ZeRO-3 across 4x H200 (141GB each) that's ~58.5GB/GPU for frozen weights — fits
+# comfortably for a LoRA run, but full-parameter fine-tuning at this footprint does not fit 4x H200.
+deepspeed: examples/deepspeed/ds_z3_config.json
+
+### dataset
+# TODO: replace with the actual domain corpus registered in data/dataset_info.json.
+dataset: c4_demo
+cutoff_len: 4096
+max_samples: 100000
+preprocessing_num_workers: 16
+dataloader_num_workers: 4
+
+### output
+output_dir: saves/gpt-oss-120b/lora/pretrain
+logging_steps: 10
+save_steps: 500
+plot_loss: true
+overwrite_output_dir: true
+save_only_model: false
+report_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]
+
+### train
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+bf16: true
+ddp_timeout: 180000000
+resume_from_checkpoint: null
+
+### eval
+# eval_dataset: c4_demo
+# val_size: 0.01
+# per_device_eval_batch_size: 1
+# eval_strategy: steps
+# eval_steps: 500

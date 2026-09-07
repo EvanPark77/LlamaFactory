@@ -1,0 +1,86 @@
+# 신용평가 도메인 온톨로지 (FIBO 개념을 참고해 최소 서브셋으로 자체 정의)
+#
+# 실제 FIBO(https://github.com/edmcouncil/fibo)는 방대한 다중 파일 구조라, 이 파이프라인이
+# 실제로 동작하는 것을 우선해 핵심 개념만 자체 네임스페이스(cred:)로 축소 정의했다.
+# 운영 단계에서는 이 클래스들을 FIBO의 대응 개념(예: fibo-fnd-acc-cur:Ratio 계열)에
+# owl:equivalentClass로 매핑하는 것을 권장한다.
+
+@prefix cred: <http://saltlux.example.org/ontology/credit-eval#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<http://saltlux.example.org/ontology/credit-eval> a owl:Ontology ;
+    rdfs:comment "기업신용평가 도메인 최소 온톨로지 — FIBO 서브셋 확장" .
+
+### 클래스 ############################################################
+
+cred:Company a owl:Class ;
+    rdfs:label "기업"@ko .
+
+cred:IndicatorType a owl:Class ;
+    rdfs:label "재무지표 종류"@ko ;
+    rdfs:comment "예: 부채비율, 유동비율, 이자보상배율 등 지표의 정의와 임계값을 담는 클래스" .
+
+cred:IndicatorObservation a owl:Class ;
+    rdfs:label "지표 관측치"@ko ;
+    rdfs:comment "특정 기업의 특정 시점 지표 관측값 — 실제 수치는 이 계층에만 존재하고, 학습데이터 생성 단계에서는 플레이스홀더로 치환된다" .
+
+cred:EvaluationCriterion a owl:Class ;
+    rdfs:label "평가 판단 기준"@ko .
+
+### 관계(Object/Data Property) #########################################
+
+cred:hasObservation a owl:ObjectProperty ;
+    rdfs:domain cred:Company ;
+    rdfs:range cred:IndicatorObservation .
+
+cred:ofIndicatorType a owl:ObjectProperty ;
+    rdfs:domain cred:IndicatorObservation ;
+    rdfs:range cred:IndicatorType .
+
+cred:hasValue a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorObservation ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "실제 관측 수치 — 학습데이터 생성 시 절대 그대로 노출하지 않고 {{variable_id}} 플레이스홀더로만 참조한다" .
+
+cred:variableId a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorObservation ;
+    rdfs:range xsd:string ;
+    rdfs:comment "학습데이터 output에 노출해도 되는 플레이스홀더 변수명 (예: debt_ratio)" .
+
+cred:observedAt a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorObservation ;
+    rdfs:range xsd:date .
+
+cred:definition a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorType ;
+    rdfs:range xsd:string .
+
+cred:thresholdWarning a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorType ;
+    rdfs:range xsd:decimal .
+
+cred:thresholdSevere a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorType ;
+    rdfs:range xsd:decimal .
+
+cred:riskDirection a owl:DatatypeProperty ;
+    rdfs:domain cred:IndicatorType ;
+    rdfs:range xsd:string ;
+    rdfs:comment "'high_is_risk' 또는 'low_is_risk' — 임계값을 초과/미달할 때 어느 쪽이 위험인지" .
+
+### 용어집 (SKOS) ######################################################
+### ECR 용어집처럼 동의어·별칭을 관리하기 위한 SKOS 개념. 실제 값은 예시.
+
+cred:term_debt_ratio a skos:Concept ;
+    skos:prefLabel "부채비율"@ko ;
+    skos:altLabel "Debt Ratio"@en, "레버리지 비율"@ko ;
+    skos:related cred:IndicatorType_DebtRatio .
+
+cred:term_interest_coverage a skos:Concept ;
+    skos:prefLabel "이자보상배율"@ko ;
+    skos:altLabel "Interest Coverage Ratio"@en, "ICR"@en ;
+    skos:related cred:IndicatorType_InterestCoverageRatio .

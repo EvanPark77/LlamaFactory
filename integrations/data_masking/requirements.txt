@@ -1,0 +1,4 @@
+# regex_masker.py / pipeline.py: no dependency beyond the standard library.
+# llm_ner_masker.py's GemmaLocalNER additionally needs:
+transformers>=4.57.0
+torch>=2.4.0

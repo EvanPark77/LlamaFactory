@@ -745,5 +745,24 @@
       "prompt": "content"
     },
     "folder": "python"
+  },
+  "credit_kg_pt_demo": {
+    "file_name": "credit_kg_pt_demo.jsonl",
+    "columns": {
+      "prompt": "text"
+    }
+  },
+  "credit_kg_sft_demo": {
+    "file_name": "credit_kg_sft_demo.json"
+  },
+  "credit_kg_dpo_demo": {
+    "file_name": "credit_kg_dpo_demo.json",
+    "ranking": true,
+    "formatting": "sharegpt",
+    "columns": {
+      "messages": "conversations",
+      "chosen": "chosen",
+      "rejected": "rejected"
+    }
   }
 }
