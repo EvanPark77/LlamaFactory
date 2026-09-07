@@ -91,10 +91,16 @@ integrations/
 `key: value` 문서 형식을 파싱한다 — 실제 매뉴얼처럼 자유서술 문서를 다룰 때는 이 부분을
 KAG/SAC-KG 방식의 LLM 추출기로 교체하고, 그래프 스키마(온톨로지)는 그대로 유지하면 된다.
 
+실제 문서를 넣기 전에는 `integrations/data_masking/`(정규식 + 로컬 Gemma-4 기반 마스킹, 폐쇄망
+배포 가이드 포함)로 먼저 비식별화하는 것을 권장한다 — `kg_builder`는 마스킹 여부를 검증하지
+않는다.
+
 ### 사용법
 
 ```bash
 pip install -r integrations/credit_kg_ontology/requirements.txt
+
+# 0) (권장) 실제 문서라면 먼저 마스킹 — integrations/data_masking/README.md 참고
 
 # 1) 문서 → KG (가상 데이터로 데모 실행)
 python3 integrations/credit_kg_ontology/kg_builder/extract.py
